@@ -5,15 +5,16 @@
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+
 import java.awt.Color;
 
 
 public class ColorConvertor {
-    private char[] charList;
-    private int length;
+    private final char[] charList;
+    private final int length;
 
     // constrcutor, it will initlize the array and read the file and store all characters into array
-    public ColorConvertor(int numOfChar, String filePath) {
+    public ColorConvertor(int numOfChar, String filePath) throws FileNotFoundException, IOException, Exception{
         this.length = numOfChar;
         this.charList = new char[this.length];
         try(FileReader fileReader = new FileReader(filePath)){
@@ -33,13 +34,19 @@ public class ColorConvertor {
                 }
                 this.charList[i] = (char) data;
             }
-        } 
+        }
+        catch (FileNotFoundException err){
+            throw err;
+        }
+        catch (IOException err){
+            throw err;
+        }
         catch (Exception err) {
-            err.printStackTrace();
+            throw err;
         }
     }
 
-    public ColorConvertor(int numOfChar) {
+    public ColorConvertor(int numOfChar) throws FileNotFoundException, IOException, Exception{
         this(numOfChar, "characters/ChineseCharacters.txt");
     }
 
