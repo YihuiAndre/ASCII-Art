@@ -1,24 +1,20 @@
-//this container class will store all the characters and it create function 
-//which if there is a RBG value, it will return an character value correposnding it
-//this is the class which take one parameter: number of chracters (size can be large than 256 and need to be in 2**n)
-
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
 import java.awt.Color;
 
-
+//Convertor that communicate between the RBG value and character
 public class ColorConvertor {
     private final char[] charList;
     private final int length;
 
-    // constrcutor, it will initlize the array and read the file and store all characters into array
+    // constructor, it will initialize the array and read the file and store the number of characters from input into array
     public ColorConvertor(int numOfChar, String filePath) throws FileNotFoundException, IOException, Exception{
         this.length = numOfChar;
         this.charList = new char[this.length];
         try(FileReader fileReader = new FileReader(filePath)){
-            if(this.length > 256 || !isVaild(this.length)){
+            if(this.length > 256 || !isValid(this.length)){
                 throw new Exception("number of character input is not valid!!");
             }
             int data;
@@ -47,11 +43,11 @@ public class ColorConvertor {
     }
 
     public ColorConvertor(int numOfChar) throws FileNotFoundException, IOException, Exception{
-        this(numOfChar, "characters/ChineseCharacters.txt");
+        this(numOfChar, "characters/ASCII.txt");
     }
 
-    //validate if the number of character is vaild in 2, 4, 8, 16, ....
-    private boolean isVaild(int number){
+    //validate if the number of character is valid in 2, 4, 8, 16, ....
+    private boolean isValid(int number){
         switch (number){
             case 2:
             case 4:
@@ -69,27 +65,38 @@ public class ColorConvertor {
 
     //input: 8 bit value of color
     //output: the character corresponding it
-    public char RGBAToChar(int RGBAValue){
-        return this.charList[RGBAValue/(256/this.length)];
+    public char colorToChar(int colorValue){
+        return this.charList[colorValue/(256/this.length)];
     }
 
-    public char RGBAToChar(int red, int green, int blue, int alpha){
-        int eightBitColor = fromColor(new Color(red, green, blue, alpha));
-        return this.charList[eightBitColor/(256/this.length)];
+    //convert RGB into 8 bit color format
+    //This could be improve by Median cut algorithm
+    public static int fromColor(int red, int green, int blue, double[] RGBRatio) throws Exception {
+        return ColorConvertor.fromColor(red, green, blue, RGBRatio[0], RGBRatio[1], RGBRatio[2]);
     }
 
-    public char RGBAToChar(Color c){
-        int eightBitColor = fromColor(c);
-        return this.charList[eightBitColor/(256/this.length)];
-    }
-
-    //convert RGBA into 8 bit color format
-    public static int fromColor(Color c){
-        return((c.getRed() >> 6) << 6) + ((c.getGreen() >> 6) << 4)
-            + ((c.getBlue() >> 6) << 2) + (c.getAlpha() >> 6);
-    }
-    public static int fromColor(int red, int green, int blue, int alpha){
-        return((red >> 6) << 6) + ((green >> 6) << 4)
-            + ((blue >> 6) << 2) + (alpha >> 6);
+    //Problem: How do we get the ratio of the color so we can distribute all the color into one?
+    public static int fromColor(int red, int green, int blue, double rPercent, double gPercent, double bPercent)
+            throws Exception {
+        int rRatio = 0;
+        int gRatio = 0;
+        int bRatio = 0;
+        if(rPercent > gPercent && rPercent > bPercent){
+            rRatio = 3;
+            gRatio = 3;
+            bRatio = 2;
+        }
+        if(bPercent > rPercent && bPercent > gPercent){
+            rRatio = 3;
+            gRatio = 2;
+            bRatio = 3;
+        }
+        else{
+            rRatio = 2;
+            gRatio = 3;
+            bRatio = 3;
+        }
+        return((red >> (8-rRatio)) << (8-rRatio)) + ((green >> (8-gRatio)) << (8-rRatio-gRatio))
+            + (blue >> (8-bRatio));
     }
 }
