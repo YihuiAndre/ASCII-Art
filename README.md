@@ -1,8 +1,9 @@
 # Text Animation
 
-This is a java personal project that take an image file as input and convert it into the text format. This could turn one image into one text file that represent the image or turn mutiple images and run it like an animation. This is insirpe by the flip book.
+This is a java personal project that takes an image file or a directory that contains a list of images as input and output an image or gif that represents the input images but in text format. Basically, it uses the RGB value in the image and converts it into a corresponding unique character. Currently, this project is still in the developed phase. This is inspired by the flipbook.
 
-Convert into text format will use the idea that each color has its own RGB value and each value will be represent as a character. This feature will allow user to choose the size of the image which affect by the how the color is compress and also the accuary of image which affect by how many characters are represent as color. We could also combine each image to make smooth transition. 
+This project uses the AWT library to do the scanning.
+
 
 ## Usage
 
