@@ -11,7 +11,7 @@ public class Main {
         String help = "Operation: -i    Path of input directory/image.\n"
                     + "           -o    Path of output directory/image.\n"
                     + "           -t    Path of characters file. default value: characters/ASCII.txt\n"
-                    + "           -n    Number of unique characters. default value: 256\n"
+                    + "           -n    Number of unique characters between 0 and 256 (**note that the input has to be in 2^n form). default value: 256\n"
                     + "           -c    Size of matrix need to be compressed. default value: 1\n"
                     + "           -h    Help menus\n"
                     + "           Example: java Main -d gif/anime -o output/anime\n";
