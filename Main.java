@@ -1,40 +1,76 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
+
+import helper.Helper;
 
 public class Main {
     public static void main(String[] args) throws FileNotFoundException, NullPointerException, IOException, Exception {
-        //ColorConvertor container = new ColorConvertor(16, "SpecialCharacters.txt");
-        //TextImage a = new TextImage(new ColorConvertor(256, "characters/ASCII.txt"), "https://thebiem.com/wp-content/uploads/2018/12/New-Movie-Weather-With-You-feature-.jpg", true, 1);
-        //TextImage a = new TextImage(new ColorConvertor(256, "characters/ASCII.txt"), "https://static.wikia.nocookie.net/darling-in-the-franxx/images/2/27/Kv04.jpg/revision/latest?cb=20171209072941", true, 2);
-        //TextImage a = new TextImage(new ColorConvertor(256, "characters/ASCII.txt"), "img/image.jpg", false, 1);
-        //a.toTextFile("img.txt");
-        //a.RGBAToTextFile("RBG.txt");
-        //a.toImgFile("output.png");
-        //a.print();
+        String inputPath = "", outputPath  = "", textFile = "characters/ASCII.txt";
+        int numOfChar = 256, compressSize = 1;
+        boolean isDirectory =  false;
+        String help = "Operation: -d    Path of input directory.\n"
+                    + "           -i    Path of an image.\n"
+                    + "           -o    Path of output directory/image.\n"
+                    + "           -t    Path of characters file. default value: characters/ASCII.txt\n"
+                    + "           -n    Number of unique characters. default value: 256\n"
+                    + "           -c    Size of matrix need to be compressed. default value: 1\n"
+                    + "           -h    Help menus\n"
+                    + "           Example: java Main -d gif/anime -o output/anime\n";
         
-        ColorConvertor translator = new ColorConvertor(256, "characters/ASCII.txt");
-        int index = 0;
-        File dir = new File("gif/anime/");
-        File[] directoryListing = dir.listFiles();
-        Arrays.sort(directoryListing);
-        TextImage[] listOfImage = new TextImage[directoryListing.length];
-        if (directoryListing != null) {
-            for (File child : directoryListing) {
-                // Do something with child
-                System.out.println(child.getPath());
-                listOfImage[index] = new TextImage(translator, child.getPath(), false);
-                int num = Integer.parseInt(child.getName().replaceAll("[\\D]", ""));
-                listOfImage[index].toImgFile("output/anime/" + num + ".png");
-                index++;
+        for(int i = 0, len = args.length; i < len; i++){
+            switch(args[i].charAt(1)){
+                case 'd':
+                    inputPath = args[i+1];
+                    isDirectory = true;
+                    break;
+                case 'i':
+                    inputPath = args[i+1];
+                    break;
+                case 'o':
+                    outputPath = args[i+1];
+                    break;
+                case 't':
+                    textFile = args[i+1];
+                    break;
+                case 'n':
+                    numOfChar = Integer.parseInt(args[i+1]);
+                    break;
+                case 'c':
+                    compressSize = Integer.parseInt(args[i+1]);
+                    break;
+                default:
+                    System.out.print(help);
+                    return;
             }
-        } else {
-            // Handle the case where dir is not really a directory.
-            // Checking dir.isDirectory() above would not be sufficient
-            // to avoid race conditions with another process that deletes
-            // directories.
+            i++;
         }
-        
+        System.out.println(inputPath + "--------------->" + outputPath);
+        ColorConvertor translator = new ColorConvertor(numOfChar, textFile);
+        if(!isDirectory){
+            TextImage img = new TextImage(translator, inputPath, compressSize);
+            img.toImgFile(outputPath);
+            System.out.println("success import image to " + outputPath);
+        }
+        else{
+            int index = 0;
+            File dir = new File(inputPath);
+            File[] directoryListing = dir.listFiles();
+            if (directoryListing != null) {
+                TextImage[] listOfImage = new TextImage[directoryListing.length];
+                for (File child : directoryListing) {
+                    // Do something with child
+                    listOfImage[index] = new TextImage(translator, child.getPath(), compressSize);
+                    //remove all the contents in the file name except the number
+                    int num = Integer.parseInt(child.getName().replaceAll("[\\D]", ""));
+                    listOfImage[index].toImgFile(outputPath + "/" + num + ".png");
+                    index++;
+                    Helper.printTaskBar(index, directoryListing.length, "Finished processing all the images to \"" + outputPath + "\"");
+                }
+            }
+            else{
+                System.out.println("Please give a valid directory path");
+            }
+        }
     }
 }

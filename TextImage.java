@@ -26,16 +26,15 @@ public class TextImage {
     //constructor which take three parameter: 
     //1. translator: the translator which translate the color into character
     //2. imgPath: the path of image which can be the path for image or URL link
-    //3. isURL: the boolean value that indicate whatever the second parameter is a link
-    //4. sizeOfCompress: the size of compress which require to compress the color in the image by nxn square
+    //3. sizeOfCompress: the size of compress which require to compress the color in the image by nxn square
     //After the execution, store all the color value into 2-dimensional array list
-    public TextImage(ColorConvertor translator, String imgPath, boolean isURL, int sizeOfCompress)
+    public TextImage(ColorConvertor translator, String imgPath, int sizeOfCompress)
             throws FileNotFoundException, IOException, NullPointerException, Exception{
         this.translator = translator;
         this.imgColor = new RGBImage();
         BufferedImage image = null; 
         try{
-            if(isURL){
+            if(isURL(imgPath)){
                 URL url = new URL(imgPath);
                 image = ImageIO.read(url);
             }
@@ -61,7 +60,7 @@ public class TextImage {
         int rowNum = 0, colNum = 0;
         //store the sum of color
         int sum;
-        System.out.println("Image width: " + w + " and height: " + h);
+        //System.out.println("Image width: " + w + " and height: " + h);
         //x and y coordinate is stand for the left and right corner coordinate of the square
         for(int y = 0; y < h; y+=sizeOfCompress){
             for(int x = 0; x < w; x+=sizeOfCompress){
@@ -78,6 +77,7 @@ public class TextImage {
                 rRatio = (rRatio+ (double) RGBVal[0]/sum)/2;
                 gRatio = (gRatio+ (double) RGBVal[1]/sum)/2;
                 bRatio = (bRatio+ (double) RGBVal[2]/sum)/2;
+                //Helper.printTaskBar(y*(w/sizeOfCompress) + (x+1), (h/sizeOfCompress)*(w/sizeOfCompress), "Finished calculating the ratio of color");
             }
             rowNum++;
         }
@@ -85,14 +85,25 @@ public class TextImage {
         this.imgColor.setRGBRatio(rRatio, gRatio, bRatio);
         for(int i = 0, len = red.size(); i < len; i++){
             this.imgColor.addRGB(i/colNum, ColorConvertor.fromColor(red.get(i), green.get(i), blue.get(i), this.imgColor.getRGBRatio()));
+            //Helper.printTaskBar(i+1, len, "Finished processing the image");
         }
-        System.out.println("Reading Complete");
+        //System.out.println("Reading Complete " + (isURL ? "Link": "File") + "---------------");
     }
 
     //overload constructor which miss the size of compression
-    public TextImage(ColorConvertor translator, String imgPath, boolean isURL)
+    public TextImage(ColorConvertor translator, String imgPath)
             throws FileNotFoundException, NullPointerException, IOException, Exception{
-        this(translator, imgPath, isURL, 1);
+        this(translator, imgPath, 1);
+    }
+
+    private boolean isURL(String url){
+        try{
+            new URL(url).toURI();
+            return true;
+        }
+        catch(Exception err){
+            return false;
+        }
     }
 
     //compress multiple color values inside the nxn square into one value
@@ -123,6 +134,7 @@ public class TextImage {
                 }
                 writer.write("\n");
             }
+            //System.out.println("Finished importing image into text file: " + filePath);
         }
         catch(FileNotFoundException err){
             err.printStackTrace();
@@ -141,6 +153,7 @@ public class TextImage {
                 }
                 writer.write("\n");
             }
+            //System.out.println("Finished importing image RGB value into text file: " + filePath);
         }
         catch(FileNotFoundException err){
             err.printStackTrace();
@@ -195,6 +208,7 @@ public class TextImage {
             g.drawString(getStringRepresentation(this.imgColor.getRGB(row)), 0, ascent + (ascent+descent)*row);
         }
         g.dispose();
+        //System.out.println("Finished importing image into image file: " + filePath);
         try {
             //write file, but only work for png
             ImageIO.write(image, "png", new File(filePath));
