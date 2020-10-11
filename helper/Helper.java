@@ -1,5 +1,6 @@
 package helper;
 
+import java.net.URL;
 import java.util.List;
 
 public class Helper {
@@ -34,6 +35,16 @@ public class Helper {
         System.out.print(bar);
         if(percentage == 100){
             System.out.println("\n" + description);
+        }
+    }
+
+    public static boolean isURL(String url){
+        try{
+            new URL(url).toURI();
+            return true;
+        }
+        catch(Exception err){
+            return false;
         }
     }
 }

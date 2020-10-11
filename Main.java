@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException, NullPointerException, IOException, Exception {
         String inputPath = "", outputPath  = "", textFile = "characters/ASCII.txt";
         int numOfChar = 256, compressSize = 1;
-        String help = "Operation: -i    Path of input directory/image.\n"
+        String help = "Operation: -i    Path of input directory/image/image url.\n"
                     + "           -o    Path of output directory/image.\n"
                     + "           -t    Path of characters file. default value: characters/ASCII.txt\n"
                     + "           -n    Number of unique characters between 0 and 256 (**note that the input has to be in 2^n form). default value: 256\n"
@@ -42,7 +42,7 @@ public class Main {
         File input = new File(inputPath);
         File output = new File(outputPath);
         //handle case when input and output file is not valid
-        if(!(input.exists())){
+        if(!(input.exists()) && !Helper.isURL(inputPath)){
             System.out.println("Please give a valid input path");
             return;
         }
