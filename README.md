@@ -1,12 +1,12 @@
 # Text Animation
 
-This is a java personal project that takes an image file or a directory that contains a list of images as input and output an image or gif that represents the input images but in text format. Basically, it uses the RGB value in the image and converts it into a corresponding unique character. This is inspired by the flipbook. Currently, this project is able to convert an image file or a directory of images into an image that represent as text format. 
+This is a java personal project that takes an **image file**, an **url image** or a **directory of images** as input and output an image or gif that represents the input images but in text art. Basically, it uses the RGB value in the image and converts it into a corresponding unique character. This is inspired by the flipbook. Currently, this project is supported to convert the image, the url image or the directory of the images into text art. 
 
-This project uses ImageIO to scan the image and AWT library to draw the text onto the image.
+This project uses **AWT library** to scan the image and draw the text art of image into output image and **IO file handling library** to store and retrieve the file.
 
 
 ## Usage
-There are two ways to execute the programs:
+There are **two** ways to execute the programs:
 
 ---
 
@@ -72,8 +72,6 @@ If you can also try the commends under to see different output:
 bash execute.sh img/example_5.jpg output/output.png characters/ASCII.txt 128 1
 ```
 
-
-
 ------------------
 | before | after |
 | :---:  | :---: |
@@ -81,4 +79,13 @@ bash execute.sh img/example_5.jpg output/output.png characters/ASCII.txt 128 1
 
 ```bash
 bash execute.sh img/example_5.jpg output/output.png characters/ASCII.txt 256 2
+```
+
+------------------
+| before | after |
+| :---:  | :---: |
+| <img src="https://cdn.jpegmini.com/user/images/slider_puffin_before_mobile.jpg" width="512" height="512" /> | <img src="./readmeFile/demonstration6.png" width="512" height="512" /> |
+
+```bash
+bash execute.sh https://cdn.jpegmini.com/user/images/slider_puffin_before_mobile.jpg output/output.png characters/ASCII.txt 256 1
 ```
