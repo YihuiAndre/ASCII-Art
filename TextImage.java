@@ -34,7 +34,7 @@ public class TextImage {
         this.imgColor = new RGBImage();
         BufferedImage image = null; 
         try{
-            if(isURL(imgPath)){
+            if(Helper.isURL(imgPath)){
                 URL url = new URL(imgPath);
                 image = ImageIO.read(url);
             }
@@ -53,25 +53,23 @@ public class TextImage {
             throw err;
         }
         int w = image.getWidth(), h = image.getHeight();
-        List<Integer> red = new ArrayList<Integer>(), green = new ArrayList<Integer>(), blue = new ArrayList<Integer>();
+        //store the RGB value
+        List<List<int[]>> RGB = new ArrayList<>();
         int[] RGBVal;
         double rRatio = 1/3.0, gRatio = 1/3.0, bRatio = 1/3.0;
-        //keep track the row and col of the image
-        int rowNum = 0, colNum = 0;
         //store the sum of color
         int sum;
         //System.out.println("Image width: " + w + " and height: " + h);
         //x and y coordinate is stand for the left and right corner coordinate of the square
         for(int y = 0; y < h; y+=sizeOfCompress){
+            RGB.add(new ArrayList<>());
             for(int x = 0; x < w; x+=sizeOfCompress){
                 //prevent the case when it could not form a square by current x and y coordinate
                 if(y + sizeOfCompress-1 >= h || x + sizeOfCompress-1 >= w){
                     continue;
                 }
                 RGBVal = compressColor(x, y, sizeOfCompress, image);
-                red.add(RGBVal[0]);
-                green.add(RGBVal[1]);
-                blue.add(RGBVal[2]);
+                RGB.get(y/sizeOfCompress).add(RGBVal);
                 //prevent the case when red, green and blue are 0
                 sum = (Helper.sum(RGBVal) == 0 ? 1 : Helper.sum(RGBVal));
                 rRatio = (rRatio+ (double) RGBVal[0]/sum)/2;
@@ -79,13 +77,15 @@ public class TextImage {
                 bRatio = (bRatio+ (double) RGBVal[2]/sum)/2;
                 //Helper.printTaskBar(y*(w/sizeOfCompress) + (x+1), (h/sizeOfCompress)*(w/sizeOfCompress), "Finished calculating the ratio of color");
             }
-            rowNum++;
         }
-        colNum = red.size()/rowNum;
+
         this.imgColor.setRGBRatio(rRatio, gRatio, bRatio);
-        for(int i = 0, len = red.size(); i < len; i++){
-            this.imgColor.addRGB(i/colNum, ColorConvertor.fromColor(red.get(i), green.get(i), blue.get(i), this.imgColor.getRGBRatio()));
-            //Helper.printTaskBar(i+1, len, "Finished processing the image");
+        //convert all the RGB color into 8 bit and store inside the RGBImage object
+        for(int y = 0, yLen = RGB.size(); y < yLen; y++){
+            for(int x = 0, xLen = RGB.get(y).size(); x < xLen; x++){
+                RGBVal = RGB.get(y).get(x);
+                this.imgColor.addRGB(y, ColorConvertor.fromColor(RGBVal[0], RGBVal[1], RGBVal[2], this.imgColor.getRGBRatio()));
+            }
         }
         //System.out.println("Reading Complete " + (isURL ? "Link": "File") + "---------------");
     }
@@ -94,16 +94,6 @@ public class TextImage {
     public TextImage(ColorConvertor translator, String imgPath)
             throws FileNotFoundException, NullPointerException, IOException, Exception{
         this(translator, imgPath, 1);
-    }
-
-    private boolean isURL(String url){
-        try{
-            new URL(url).toURI();
-            return true;
-        }
-        catch(Exception err){
-            return false;
-        }
     }
 
     //compress multiple color values inside the nxn square into one value
