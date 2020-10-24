@@ -56,9 +56,8 @@ public class TextImage {
         //store the RGB value
         List<List<int[]>> RGB = new ArrayList<>();
         int[] RGBVal;
-        double rRatio = 1/3.0, gRatio = 1/3.0, bRatio = 1/3.0;
-        //store the sum of color
-        int sum;
+        //store all the sum of red, green, blue
+        long rSum = 0, gSum = 0, bSum = 0;
         //System.out.println("Image width: " + w + " and height: " + h);
         //x and y coordinate is stand for the left and right corner coordinate of the square
         for(int y = 0; y < h; y+=sizeOfCompress){
@@ -70,16 +69,15 @@ public class TextImage {
                 }
                 RGBVal = compressColor(x, y, sizeOfCompress, image);
                 RGB.get(y/sizeOfCompress).add(RGBVal);
-                //prevent the case when red, green and blue are 0
-                sum = (Helper.sum(RGBVal) == 0 ? 1 : Helper.sum(RGBVal));
-                rRatio = (rRatio+ (double) RGBVal[0]/sum)/2;
-                gRatio = (gRatio+ (double) RGBVal[1]/sum)/2;
-                bRatio = (bRatio+ (double) RGBVal[2]/sum)/2;
-                //Helper.printTaskBar(y*(w/sizeOfCompress) + (x+1), (h/sizeOfCompress)*(w/sizeOfCompress), "Finished calculating the ratio of color");
+                rSum += RGBVal[0];
+                gSum += RGBVal[1];
+                bSum += RGBVal[2];
             }
         }
-
-        this.imgColor.setRGBRatio(rRatio, gRatio, bRatio);
+        //obtain the average value of red, green and blue
+        int averageRed = (int) rSum/(w*h), averageGreen = (int) gSum/(w*h), averageBlue = (int) bSum/(w*h);
+        int total = averageRed + averageGreen + averageBlue;
+        this.imgColor.setRGBRatio((double) averageRed/total, (double) averageGreen/total, (double) averageBlue/total);
         //convert all the RGB color into 8 bit and store inside the RGBImage object
         for(int y = 0, yLen = RGB.size(); y < yLen; y++){
             for(int x = 0, xLen = RGB.get(y).size(); x < xLen; x++){
@@ -87,7 +85,6 @@ public class TextImage {
                 this.imgColor.addRGB(y, ColorConvertor.fromColor(RGBVal[0], RGBVal[1], RGBVal[2], this.imgColor.getRGBRatio()));
             }
         }
-        //System.out.println("Reading Complete " + (isURL ? "Link": "File") + "---------------");
     }
 
     //overload constructor which miss the size of compression
@@ -178,14 +175,7 @@ public class TextImage {
         return builder.toString();
     }
 
-    //take the text image and convert it into png image format
-    public void toImgFile(String filePath){
-        int fontSize = 10;
-        FontMetrics fm = getFontMetrics(new Font(Font.MONOSPACED, Font.PLAIN, fontSize));
-        int ascent = fm.getAscent(), descent = fm.getDescent();
-        int width = ((fontSize/5)*3)*this.imgColor.getColSize(0)+1, height = (ascent+descent)*this.imgColor.getRowSize()+1;
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics g = image.getGraphics();
+    private void drawImg(Graphics g, int width, int height, FontMetrics fm, int ascent, int descent){
         //change the pen color
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, width, height);
@@ -194,11 +184,20 @@ public class TextImage {
         g.setFont(fm.getFont());
         //render all the characters into image files
         for(int row = 0, rLen = this.imgColor.getRowSize(); row < rLen; row++){
-            //System.out.println(g.getFontMetrics().charsWidth(getStringRepresentation(this.colorVal.get(row)).toCharArray(), 0, this.colorVal.get(row).size()));
             g.drawString(getStringRepresentation(this.imgColor.getRGB(row)), 0, ascent + (ascent+descent)*row);
         }
         g.dispose();
-        //System.out.println("Finished importing image into image file: " + filePath);
+    }
+
+    //take the text image and convert it into png image format
+    public void toImgFile(String filePath){
+        int fontSize = 10;
+        FontMetrics fm = getFontMetrics(new Font(Font.MONOSPACED, Font.PLAIN, fontSize));
+        int ascent = fm.getAscent(), descent = fm.getDescent();
+        int width = ((fontSize/5)*3)*this.imgColor.getColSize(0)+1, height = (ascent+descent)*this.imgColor.getRowSize()+1;
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics g = image.getGraphics();
+        drawImg(g, width, height, fm, ascent, descent);
         try {
             //write file, but only work for png
             ImageIO.write(image, "png", new File(filePath));
