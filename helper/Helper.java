@@ -2,6 +2,7 @@ package helper;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 public class Helper {
     public static <T> void printArr(List<List<T>> twoDArr) {
@@ -10,6 +11,12 @@ public class Helper {
                 System.out.print(val + " ");
             }
             System.out.println("");
+        }
+    }
+
+    public static <K, V> void printMap(Map<K, V> map) {
+        for(K key :map.keySet()){
+            System.out.println(key + ": " + map.get(key));
         }
     }
 

@@ -1,6 +1,10 @@
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Map;
+
+import helper.Helper;
 
 
 //Convertor that communicate between the RBG value and character
@@ -70,32 +74,27 @@ public class ColorConvertor {
 
     //convert RGB into 8 bit color format
     //This could be improve by Median cut algorithm
-    public static int fromColor(int red, int green, int blue, double[] RGBRatio) throws Exception {
-        return ColorConvertor.fromColor(red, green, blue, RGBRatio[0], RGBRatio[1], RGBRatio[2]);
-    }
-
-    //Problem: How do we get the ratio of the color so we can distribute all the color into one?
-    public static int fromColor(int red, int green, int blue, double rPercent, double gPercent, double bPercent)
-            throws Exception {
-        int rRatio = 0;
-        int gRatio = 0;
-        int bRatio = 0;
-        if(rPercent > gPercent && rPercent > bPercent){
-            rRatio = 3;
-            gRatio = 3;
-            bRatio = 2;
+    public static int fromColor(int red, int green, int blue, Map<Character, Integer> map){
+        int bitUsed = 0, eightBitColor = 0, shiftRight;
+        //System.out.println(map.get('r') + " " + map.get('g') + " " + map.get('b'));
+        for(Character key : map.keySet()){
+            switch(key){
+                case 'r':
+                    shiftRight = 8 - bitUsed - map.get(key);
+                    eightBitColor += (red >> (8 - map.get(key))) << shiftRight;
+                    break;
+                case 'g':
+                    shiftRight = 8 - bitUsed - map.get(key);
+                    eightBitColor += (red >> (8 - map.get(key))) << shiftRight;
+                    break;
+                case 'b':
+                    shiftRight = 8 - bitUsed - map.get(key);
+                    eightBitColor += (red >> (8 - map.get(key))) << shiftRight;
+                    break;
+            }
+            bitUsed += map.get(key);
         }
-        if(bPercent > rPercent && bPercent > gPercent){
-            rRatio = 3;
-            gRatio = 2;
-            bRatio = 3;
-        }
-        else{
-            rRatio = 2;
-            gRatio = 3;
-            bRatio = 3;
-        }
-        return((red >> (8-rRatio)) << (8-rRatio)) + ((green >> (8-gRatio)) << (8-rRatio-gRatio))
-            + (blue >> (8-bRatio));
+        //System.out.println(bitUsed);
+        return eightBitColor;
     }
 }

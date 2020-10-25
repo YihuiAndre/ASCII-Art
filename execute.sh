@@ -7,6 +7,7 @@ num=${4:-256}
 compress=${5:-1}
 
 javac Main.java
+
 if [ "$input" = "h" ]
 then
     java Main -h
