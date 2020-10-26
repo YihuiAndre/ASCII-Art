@@ -1,5 +1,6 @@
 package helper;
 
+import java.io.File;
 import java.net.URL;
 import java.util.List;
 
@@ -46,5 +47,27 @@ public class Helper {
         catch(Exception err){
             return false;
         }
+    }
+
+    public static boolean isDirectory(String filePath){
+        File file = new File(filePath);
+        return file.isDirectory();
+    }
+
+    public static boolean isFileExist(String filePath){
+        File file = new File(filePath);
+        return file.exists();
+    }
+
+    public static boolean isFile(String filePath){
+        File file = new File(filePath);
+        return file.isFile();
+    }
+
+    public static boolean createDirectory(String filePath){
+        //Creating a File object
+        File file = new File(filePath);
+        //Creating the directory
+        return file.mkdir();
     }
 }

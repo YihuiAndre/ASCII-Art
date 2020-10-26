@@ -5,6 +5,62 @@ import java.io.IOException;
 import helper.Helper;
 
 public class Main {
+
+    //read a input image file and output to output path
+    public static boolean readImgToOutputImg(ColorConvertor translator, String inputPath, String outputPath, int compressSize)
+            throws FileNotFoundException, NullPointerException, IOException, Exception {
+
+        //validate the file type, only allow output file as png image
+        if(!outputPath.substring(outputPath.length() - 3).equals("png")){
+            System.out.println("Please make sure the image file extension is ending by png");
+            return false;
+        }
+        //validate if the output file path is a directory, if so return false
+        else if(Helper.isDirectory(outputPath)){
+            System.out.println("The output file could not be a directory!");
+            return false;
+        }
+
+        TextImage img = new TextImage(translator, inputPath, compressSize);
+        img.toImgFile(outputPath);
+        return true;
+    }
+
+    //read a input directory and output to output directory
+    public static boolean readImgDirectoryToOutputDirectory(ColorConvertor translator, String inputDirectory, String outputDirectory, int compressSize)
+            throws FileNotFoundException, NullPointerException, IOException, Exception {
+        //if output path is a file, then print the error
+        if(Helper.isFile(outputDirectory)){
+            System.out.println("Please give a valid output directory path");
+            return false;
+        }       
+        File[] directoryListing = new File(inputDirectory).listFiles();
+        if (directoryListing != null) {
+            int index = 0;
+            TextImage[] listOfImage = new TextImage[directoryListing.length];
+            for (File child : directoryListing) {
+                listOfImage[index] = new TextImage(translator, child.getPath(), compressSize);
+                //remove all the contents in the file name except the number
+                int num = Integer.parseInt(child.getName().replaceAll("[\\D]", ""));
+                if(!Helper.isFileExist(outputDirectory)){
+                    boolean isSuccessful = Helper.createDirectory(outputDirectory);
+                    if(!isSuccessful){
+                        System.out.println("Couldn't create directory!");
+                        return false;
+                    }
+                }
+                listOfImage[index].toImgFile(outputDirectory + "/" + num + ".png");
+                index++;
+                Helper.printTaskBar(index, directoryListing.length, "Finished processing all the images to \"" + outputDirectory + "\"");
+            }
+        }
+        else{
+            System.out.println("The directory is empty!!");
+            return false;
+        }
+        return true;
+    }
+
     public static void main(String[] args) throws FileNotFoundException, NullPointerException, IOException, Exception {
         String inputPath = "", outputPath  = "", textFile = "characters/ASCII.txt";
         int numOfChar = 256, compressSize = 1;
@@ -39,57 +95,23 @@ public class Main {
             }
             i++;
         }
-        File input = new File(inputPath);
-        File output = new File(outputPath);
-        //handle case when input and output file is not valid
-        if(!(input.exists()) && !Helper.isURL(inputPath)){
+
+        boolean isSuccessful;
+        String message;
+        //handle case when the input file is not exist and not link
+        if(!Helper.isFileExist(inputPath) && !Helper.isURL(inputPath)){
             System.out.println("Please give a valid input path");
-            return;
-        }
-        else if(!(output.exists())){
-            System.out.println("Please give a valid output path");
             return;
         }
         System.out.println(inputPath + "--------------->" + outputPath);
         ColorConvertor translator = new ColorConvertor(numOfChar, textFile);
-        if(!input.isDirectory()){
-            //if output path is not a file path, print error message
-            if(!(output.isFile())){
-                System.out.println("Please give a valid output image path");
-                return;
-            }
-            //validate the file type, only allow png image
-            else if(!outputPath.substring(outputPath.length() - 3).equals("png")){
-                System.out.println("Please make sure the image file extension is ending by png");
-                return;
-            }
-            TextImage img = new TextImage(translator, inputPath, compressSize);
-            img.toImgFile(outputPath);
-            System.out.println("success import image to " + outputPath);
+        if(!Helper.isDirectory(inputPath)){
+            isSuccessful = readImgToOutputImg(translator, inputPath, outputPath, compressSize);
         }
         else{
-            //if output path is not a directory path, print error message
-            if(!(output.isDirectory())){
-                System.out.println("Please give a valid output directory path");
-                return;
-            }
-            int index = 0;
-            File[] directoryListing = input.listFiles();
-            if (directoryListing != null) {
-                TextImage[] listOfImage = new TextImage[directoryListing.length];
-                for (File child : directoryListing) {
-                    // Do something with child
-                    listOfImage[index] = new TextImage(translator, child.getPath(), compressSize);
-                    //remove all the contents in the file name except the number
-                    int num = Integer.parseInt(child.getName().replaceAll("[\\D]", ""));
-                    listOfImage[index].toImgFile(outputPath + "/" + num + ".png");
-                    index++;
-                    Helper.printTaskBar(index, directoryListing.length, "Finished processing all the images to \"" + outputPath + "\"");
-                }
-            }
-            else{
-                System.out.println("Please give a valid directory path");
-            }
+            isSuccessful = readImgDirectoryToOutputDirectory(translator, inputPath, outputPath, compressSize);
         }
+        message = (isSuccessful ? "success import image to ": "Some errors occur when import image to");
+        System.out.println(message + outputPath);
     }
 }
