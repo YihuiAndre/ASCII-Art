@@ -1,12 +1,14 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 //an container class that store the image RGB value in each pixel
 public class RGBImage {
     //store the 8 bit color value of the image
     private final List<List<Integer>> colorVal;
     //store the ratio of the color 
-    private final double[] RGBRatio = {0.0,0.0,0.0};
+    private final Map<Character, Integer> RGBRatio = new HashMap<>();
     
     public RGBImage(){
         this.colorVal = new ArrayList<>();
@@ -40,13 +42,32 @@ public class RGBImage {
         this.colorVal.get(y).add(RGB);
     }
 
-    public double[] getRGBRatio(){
+    public Map<Character, Integer> getRGBRatio(){
         return this.RGBRatio;
     }
 
-    public void setRGBRatio(double rRatio,double gRatio, double bRatio){
-        this.RGBRatio[0] = rRatio;
-        this.RGBRatio[1] = gRatio;
-        this.RGBRatio[2] = bRatio;
+    public void setRGBRatio(int averageRed,int averageGreen, int averageBlue){
+        double sum = averageRed + averageGreen + averageBlue;
+        double rPercent = averageRed/sum, gPercent = averageGreen/sum, bPercent = averageBlue/sum;
+        int rRatio, gRatio, bRatio;
+        if(rPercent > gPercent && rPercent > bPercent){
+            rRatio = 3;
+            gRatio = 3;
+            bRatio = 2;
+        }
+        else if(bPercent > rPercent && bPercent > gPercent){
+            rRatio = 3;
+            gRatio = 2;
+            bRatio = 3;
+        }
+        else{
+            rRatio = 2;
+            gRatio = 3;
+            bRatio = 3;
+        }
+        //System.out.println(rRatio + " " + gRatio + " " + bRatio);
+        this.RGBRatio.put('r', rRatio);
+        this.RGBRatio.put('g', gRatio);
+        this.RGBRatio.put('b', bRatio);
     }
 }

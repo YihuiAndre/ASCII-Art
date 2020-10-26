@@ -58,7 +58,6 @@ public class TextImage {
         int[] RGBVal;
         //store all the sum of red, green, blue
         long rSum = 0, gSum = 0, bSum = 0;
-        //System.out.println("Image width: " + w + " and height: " + h);
         //x and y coordinate is stand for the left and right corner coordinate of the square
         for(int y = 0; y < h; y+=sizeOfCompress){
             RGB.add(new ArrayList<>());
@@ -76,8 +75,7 @@ public class TextImage {
         }
         //obtain the average value of red, green and blue
         int averageRed = (int) rSum/(w*h), averageGreen = (int) gSum/(w*h), averageBlue = (int) bSum/(w*h);
-        int total = averageRed + averageGreen + averageBlue;
-        this.imgColor.setRGBRatio((double) averageRed/total, (double) averageGreen/total, (double) averageBlue/total);
+        this.imgColor.setRGBRatio(averageRed, averageGreen, averageBlue);
         //convert all the RGB color into 8 bit and store inside the RGBImage object
         for(int y = 0, yLen = RGB.size(); y < yLen; y++){
             for(int x = 0, xLen = RGB.get(y).size(); x < xLen; x++){
