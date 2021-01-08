@@ -41,7 +41,7 @@ public class Main {
             for (File child : directoryListing) {
                 listOfImage[index] = new TextImage(translator, child.getPath(), compressSize);
                 //remove all the contents in the file name except the number
-                int num = Integer.parseInt(child.getName().replaceAll("[\\D]", ""));
+                int num = Helper.getNumber(child.getName());
                 if(!Helper.isFileExist(outputDirectory)){
                     boolean isSuccessful = Helper.createDirectory(outputDirectory);
                     if(!isSuccessful){

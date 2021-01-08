@@ -70,4 +70,9 @@ public class Helper {
         //Creating the directory
         return file.mkdir();
     }
+
+    //obtain number from the string
+    public static int getNumber(String s){
+        return Integer.parseInt(s.replaceAll("[\\D]", ""));
+    }
 }
