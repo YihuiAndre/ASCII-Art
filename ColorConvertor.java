@@ -1,15 +1,25 @@
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Map;
+import java.util.Set;
+
+import helper.Helper;
 
 
-//Convertor that communicate between the RBG value and character
+//A class use to communicate between the grayscale value and character
 public class ColorConvertor {
     private final char[] charList;
     private final int length;
 
-    // constructor, it will initialize the array and read the file and store the number of characters from input into array
+    /**
+     * constructor, recevice the source of characters file and use those characters to translate the 
+     * grayscale value into character
+     * @param  numOfChar  an integer value that represent the number of unique characters to represent the image
+     * @param  filePath an string that recevice the source of characters file
+     * @throws FileNotFoundException 
+     * @throws IOException
+     * @throws Exception
+     */
     public ColorConvertor(int numOfChar, String filePath) throws FileNotFoundException, IOException, Exception{
         this.length = numOfChar;
         this.charList = new char[this.length];
@@ -17,18 +27,23 @@ public class ColorConvertor {
             if(this.length > 256 || !isValid(this.length)){
                 throw new Exception("number of character input is not valid!!");
             }
-            int data;
-            for(int i = 0; i < this.length; i++){
+            int fileLength = Helper.getFileLength(filePath);
+            //generate a list of random number from 0 to 256 with length of L
+            Set<Integer> randomNumber = Helper.randomNumberList(0, fileLength, numOfChar);
+            int data, index = 0;
+            for(int i = 0; i < fileLength; i++){
                 data = fileReader.read();
                 //10 represent as \n
-                if(data == 10){
+                while(data == 10 && data != -1){
                     data = fileReader.read();
                 }
                 //when read at the end of the file
-                else if(data == -1){
+                if(data == -1){
                     throw new Exception("file length is not match with characters length");
                 }
-                this.charList[i] = (char) data;
+                //get half of the number of character from at the beginning and half at the end
+                //if(i < numOfChar/2 || i >= (fileLength-numOfChar/2)) this.charList[index++] = (char) data;
+                if(randomNumber.contains(i)) this.charList[index++] = (char) data;
             }
         }
         catch (FileNotFoundException err){
@@ -46,33 +61,28 @@ public class ColorConvertor {
         this(numOfChar, "characters/ASCII.txt");
     }
 
-    //validate if the number of character is valid in 2, 4, 8, 16, ....
+    /**
+     * validate if the number of character is valid in 2, 4, 8, 16, .... until 256 as maximun
+     * @param  number  An integer number that represent as the number of unique characters
+     * @return the boolean result of validation
+     */
     private boolean isValid(int number){
-        switch (number){
-            case 2:
-            case 4:
-            case 8:
-            case 16:
-            case 32:
-            case 64:
-            case 128:
-            case 256:
-                return true;
-            default:
-                return false;
-        }
+        if(number > 256 || number%2 != 0) return false;
+        if(number == 2) return true;
+        return isValid(number/2);
     }
 
-    //input: 8 bit value of color
-    //output: the character corresponding it
-    public char colorToChar(int colorValue){
-        return this.charList[colorValue/(256/this.length)];
+    /**
+     * translate the grayscale into a character
+     * The value of gray scale is from 0 to 256:
+     * 1. 0 is darker since rbg of 0, 0, 0 is black
+     * 2. 256 is lighter since rbg of 256, 256, 256 is white
+     * @param  g 8 bit value of grayscale
+     * @return the character corresponding with the grayscale value
+     */
+    public char colorToChar(int g){
+        int bit = this.length-1;
+        return this.charList[bit-g/(256/this.length)];
     }
 
-    //convert RGB into 8 bit color format
-    //This could be improve by Median cut algorithm
-    public static int fromColor(int red, int green, int blue, Map<Character, Integer> colorRatio){
-        return((red >> (8-colorRatio.get('r'))) << (8-colorRatio.get('r'))) + ((green >> (8-colorRatio.get('g'))) << (8-colorRatio.get('r')-colorRatio.get('g')))
-            + (blue >> (8-colorRatio.get('b')));
-    }
 }

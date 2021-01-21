@@ -13,14 +13,12 @@ import java.awt.Canvas;
 import javax.imageio.ImageIO;
 
 import helper.Helper;
-
-import java.util.ArrayList;
 import java.util.List;
 
 //convert an image into text file format and able to output as text in terminal or store.
 public class TextImage {
-    //store the color value of the image
-    private final RGBImage imgColor;
+    //store the grayscale value of the image
+    private final GrayscaleImage imgColor;
     private ColorConvertor translator;
 
     //constructor which take three parameter: 
@@ -31,7 +29,7 @@ public class TextImage {
     public TextImage(ColorConvertor translator, String imgPath, int sizeOfCompress)
             throws FileNotFoundException, IOException, NullPointerException, Exception{
         this.translator = translator;
-        this.imgColor = new RGBImage();
+        this.imgColor = new GrayscaleImage();
         BufferedImage image = null; 
         try{
             if(Helper.isURL(imgPath)){
@@ -53,34 +51,14 @@ public class TextImage {
             throw err;
         }
         int w = image.getWidth(), h = image.getHeight();
-        //store the RGB value
-        List<List<int[]>> RGB = new ArrayList<>();
-        int[] RGBVal;
-        //store all the sum of red, green, blue
-        long rSum = 0, gSum = 0, bSum = 0;
         //x and y coordinate is stand for the left and right corner coordinate of the square
         for(int y = 0; y < h; y+=sizeOfCompress){
-            RGB.add(new ArrayList<>());
             for(int x = 0; x < w; x+=sizeOfCompress){
                 //prevent the case when it could not form a square by current x and y coordinate
                 if(y + sizeOfCompress-1 >= h || x + sizeOfCompress-1 >= w){
                     continue;
                 }
-                RGBVal = compressColor(x, y, sizeOfCompress, image);
-                RGB.get(y/sizeOfCompress).add(RGBVal);
-                rSum += RGBVal[0];
-                gSum += RGBVal[1];
-                bSum += RGBVal[2];
-            }
-        }
-        //obtain the average value of red, green and blue
-        int averageRed = (int) rSum/(w*h), averageGreen = (int) gSum/(w*h), averageBlue = (int) bSum/(w*h);
-        this.imgColor.setRGBRatio(averageRed, averageGreen, averageBlue);
-        //convert all the RGB color into 8 bit and store inside the RGBImage object
-        for(int y = 0, yLen = RGB.size(); y < yLen; y++){
-            for(int x = 0, xLen = RGB.get(y).size(); x < xLen; x++){
-                RGBVal = RGB.get(y).get(x);
-                this.imgColor.addRGB(y, ColorConvertor.fromColor(RGBVal[0], RGBVal[1], RGBVal[2], this.imgColor.getRGBRatio()));
+                this.imgColor.addGrayscale(y/sizeOfCompress, compressRBGToGrayscale(x, y, sizeOfCompress, image));
             }
         }
     }
@@ -92,12 +70,11 @@ public class TextImage {
     }
 
     //compress multiple color values inside the nxn square into one value
-    private int[] compressColor(int startX, int startY, int sizeOfCompress, BufferedImage image){
+    private int compressRBGToGrayscale(int startX, int startY, int sizeOfCompress, BufferedImage image){
         int red = 0, green = 0, blue = 0;
-        Color c = null;
         for(int y = startY; y < startY+sizeOfCompress; y++){
             for(int x = startX; x < startX+sizeOfCompress; x++){
-                c = new Color(image.getRGB(x,y));
+                Color c = new Color(image.getRGB(x,y));
                 red += c.getRed();
                 green += c.getGreen();
                 blue += c.getBlue();
@@ -107,13 +84,13 @@ public class TextImage {
         red /= squareSize;
         green /= squareSize;
         blue /= squareSize;
-        return new int[]{red, green, blue};
+        return (red+green+blue)/3;
     }
 
     //output the image in the text format into text file
     public void toTextFile(String filePath){
         try(FileWriter writer = new FileWriter(filePath)){
-            for(List<Integer> array : this.imgColor.getColorVal()){
+            for(List<Integer> array : this.imgColor.getGrayscale()){
                 for(Integer val : array){
                     writer.write(translator.colorToChar(val));
                 }
@@ -132,7 +109,7 @@ public class TextImage {
     //output the color color as integer value into text file
     public void colorToTextFile(String filePath){
         try(FileWriter writer = new FileWriter(filePath)){
-            for(List<Integer> array : this.imgColor.getColorVal()){
+            for(List<Integer> array : this.imgColor.getGrayscale()){
                 for(Integer val : array){
                     writer.write(val + " ");
                 }
@@ -150,7 +127,7 @@ public class TextImage {
 
     //output the img to the terminal
     public void print(){
-        for(List<Integer> array : this.imgColor.getColorVal()){
+        for(List<Integer> array : this.imgColor.getGrayscale()){
             for(Integer val : array){
                 System.out.print(translator.colorToChar(val));
             }
@@ -173,29 +150,29 @@ public class TextImage {
         return builder.toString();
     }
 
-    private void drawImg(Graphics g, int width, int height, FontMetrics fm, int ascent, int descent){
-        //change the pen color
-        g.setColor(Color.WHITE);
-        g.fillRect(0, 0, width, height);
-        g.setColor(Color.BLACK);
-        //set font as MONOSPACED because all characters have the same width
-        g.setFont(fm.getFont());
+    private void drawImg(Graphics g, int ascent, int descent){
         //render all the characters into image files
         for(int row = 0, rLen = this.imgColor.getRowSize(); row < rLen; row++){
-            g.drawString(getStringRepresentation(this.imgColor.getRGB(row)), 0, ascent + (ascent+descent)*row);
+            g.drawString(getStringRepresentation(this.imgColor.getGrayscale(row)), 0, ascent + (ascent+descent)*row);
         }
         g.dispose();
     }
 
     //take the text image and convert it into png image format
-    public void toImgFile(String filePath){
+    public void toImgFile(String filePath, Color c){
         int fontSize = 10;
         FontMetrics fm = getFontMetrics(new Font(Font.MONOSPACED, Font.PLAIN, fontSize));
         int ascent = fm.getAscent(), descent = fm.getDescent();
         int width = ((fontSize/5)*3)*this.imgColor.getColSize(0)+1, height = (ascent+descent)*this.imgColor.getRowSize()+1;
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics g = image.getGraphics();
-        drawImg(g, width, height, fm, ascent, descent);
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
+        Graphics graph = image.getGraphics();
+        //set font as MONOSPACED because all characters have the same width
+        graph.setFont(fm.getFont());
+        //change the background
+        graph.setColor(Color.WHITE);
+        graph.fillRect(0, 0, width, height);
+        graph.setColor(c);
+        drawImg(graph, ascent, descent);
         try {
             //write file, but only work for png
             ImageIO.write(image, "png", new File(filePath));

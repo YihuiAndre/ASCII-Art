@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -22,7 +23,7 @@ public class Main {
         }
 
         TextImage img = new TextImage(translator, inputPath, compressSize);
-        img.toImgFile(outputPath);
+        img.toImgFile(outputPath, Color.BLACK);
         return true;
     }
 
@@ -49,7 +50,7 @@ public class Main {
                         return false;
                     }
                 }
-                listOfImage[index].toImgFile(outputDirectory + "/" + num + ".png");
+                listOfImage[index].toImgFile(outputDirectory + "/" + num + ".png", Color.BLACK);
                 index++;
                 Helper.printTaskBar(index, directoryListing.length, "Finished processing all the images to \"" + outputDirectory + "\"");
             }
@@ -70,7 +71,7 @@ public class Main {
                     + "           -n    Number of unique characters between 0 and 256 (**note that the input has to be in 2^n form). default value: 256\n"
                     + "           -c    Size of matrix need to be compressed. default value: 1\n"
                     + "           -h    Help menus\n"
-                    + "           Example: java Main -d gif/anime -o output/anime\n";
+                    + "           Example: java Main -i gif/anime -o output/anime\n";
         
         for(int i = 0, len = args.length; i < len; i++){
             switch(args[i].charAt(1)){
