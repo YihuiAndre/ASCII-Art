@@ -13,3 +13,6 @@ then
 else
     java Main -i $input -o $output -t $text -n $num -c $compress
 fi
+
+rm *.class
+rm ./helper/*.class
