@@ -8,39 +8,46 @@ import helper.Helper;
 public class Main {
 
     //read a input image file and output to output path
-    public static boolean readImgToOutputImg(ColorConvertor translator, String inputPath, String outputPath, int compressSize)
+    public static boolean readImgToOutputImg(ColorConvertor translator, String inputPath, String outputPath, Color c)
             throws FileNotFoundException, NullPointerException, IOException, Exception {
-
-        //validate the file type, only allow output file as png image
-        if(!outputPath.substring(outputPath.length() - 3).equals("png")){
-            System.out.println("Please make sure the image file extension is ending by png");
-            return false;
+        
+        String fileExtension = "";
+        if(!outputPath.equals("")){ 
+            fileExtension = outputPath.substring(outputPath.length() - 3);
+            //validate the file type, only allow output file as png image or txt file
+            if(!fileExtension.equals("png") && !fileExtension.equals("txt")){
+                System.out.println("Please make sure the output image file extension is ending by png or txt");
+                return false;
+            }
+            //validate if the output file path is a directory, if so return false
+            else if(Helper.isDirectory(outputPath)){
+                System.out.println("The output file could not be a directory!");
+                return false;
+            }
         }
-        //validate if the output file path is a directory, if so return false
-        else if(Helper.isDirectory(outputPath)){
-            System.out.println("The output file could not be a directory!");
-            return false;
-        }
 
-        TextImage img = new TextImage(translator, inputPath, compressSize);
-        img.toImgFile(outputPath, Color.BLACK);
+        TextImage img = new TextImage(translator, inputPath);
+        if(fileExtension.equals("png")) img.toImgFile(outputPath, c);
+        else if(fileExtension.equals("txt")) img.toTextFile(outputPath);
+        else img.toTerminal();
+
         return true;
     }
 
     //read a input directory and output to output directory
-    public static boolean readImgDirectoryToOutputDirectory(ColorConvertor translator, String inputDirectory, String outputDirectory, int compressSize)
+    public static boolean readImgDirectoryToOutputDirectory(ColorConvertor translator, String inputDirectory, String outputDirectory, Color c)
             throws FileNotFoundException, NullPointerException, IOException, Exception {
         //if output path is a file, then print the error
         if(Helper.isFile(outputDirectory)){
             System.out.println("Please give a valid output directory path");
             return false;
-        }       
+        }
         File[] directoryListing = new File(inputDirectory).listFiles();
         if (directoryListing != null) {
             int index = 0;
             TextImage[] listOfImage = new TextImage[directoryListing.length];
             for (File child : directoryListing) {
-                listOfImage[index] = new TextImage(translator, child.getPath(), compressSize);
+                listOfImage[index] = new TextImage(translator, child.getPath());
                 //remove all the contents in the file name except the number
                 int num = Helper.getNumber(child.getName());
                 if(!Helper.isFileExist(outputDirectory)){
@@ -50,7 +57,7 @@ public class Main {
                         return false;
                     }
                 }
-                listOfImage[index].toImgFile(outputDirectory + "/" + num + ".png", Color.BLACK);
+                listOfImage[index].toImgFile(outputDirectory + "/" + num + ".png", c);
                 index++;
                 Helper.printTaskBar(index, directoryListing.length, "Finished processing all the images to \"" + outputDirectory + "\"");
             }
@@ -63,13 +70,14 @@ public class Main {
     }
 
     public static void main(String[] args) throws FileNotFoundException, NullPointerException, IOException, Exception {
-        String inputPath = "", outputPath  = "", textFile = "characters/ASCII.txt";
-        int numOfChar = 256, compressSize = 1;
+        String inputPath = "img/example_5.jpg", outputPath  = "output/output.png", textFile = "characters/ASCII.txt";
+        int numOfChar = 256;
+        Color color = Color.BLACK;
         String help = "Operation: -i    Path of input directory/image/image url.\n"
                     + "           -o    Path of output directory/image.\n"
                     + "           -t    Path of characters file. default value: characters/ASCII.txt\n"
                     + "           -n    Number of unique characters between 0 and 256 (**note that the input has to be in 2^n form). default value: 256\n"
-                    + "           -c    Size of matrix need to be compressed. default value: 1\n"
+                    + "           -c    color of the ASCII Art. default value: black\n"
                     + "           -h    Help menus\n"
                     + "           Example: java Main -i gif/anime -o output/anime\n";
         
@@ -88,7 +96,7 @@ public class Main {
                     numOfChar = Integer.parseInt(args[i+1]);
                     break;
                 case 'c':
-                    compressSize = Integer.parseInt(args[i+1]);
+                    color = Helper.getColor(args[i+1]);
                     break;
                 default:
                     System.out.print(help);
@@ -104,15 +112,15 @@ public class Main {
             System.out.println("Please give a valid input path");
             return;
         }
-        System.out.println(inputPath + "--------------->" + outputPath);
+        System.out.println(inputPath + " =============> " + outputPath);
         ColorConvertor translator = new ColorConvertor(numOfChar, textFile);
         if(!Helper.isDirectory(inputPath)){
-            isSuccessful = readImgToOutputImg(translator, inputPath, outputPath, compressSize);
+            isSuccessful = readImgToOutputImg(translator, inputPath, outputPath, color);
         }
         else{
-            isSuccessful = readImgDirectoryToOutputDirectory(translator, inputPath, outputPath, compressSize);
+            isSuccessful = readImgDirectoryToOutputDirectory(translator, inputPath, outputPath, color);
         }
-        message = (isSuccessful ? "success import image to ": "Some errors occur when import image to");
+        message = (isSuccessful ? "success import image to ": "Some errors occur when import image to ");
         System.out.println(message + outputPath);
     }
 }
