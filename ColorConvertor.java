@@ -12,10 +12,10 @@ public class ColorConvertor {
     private final int length;
 
     /**
-     * constructor, recevice the source of characters file and use those characters to translate the 
+     * constructor, receive the source of characters file and use those characters to translate the 
      * grayscale value into character
      * @param  numOfChar  an integer value that represent the number of unique characters to represent the image
-     * @param  filePath an string that recevice the source of characters file
+     * @param  filePath an string that receive the source of characters file
      * @throws FileNotFoundException 
      * @throws IOException
      * @throws Exception
@@ -28,6 +28,10 @@ public class ColorConvertor {
                 throw new Exception("number of character input is not valid!!");
             }
             int fileLength = Helper.getFileLength(filePath);
+            if(fileLength > 256) fileLength = 256;
+            if(fileLength < numOfChar){
+                throw new Exception("file length is less than characters length -> Length of file: " + fileLength);
+            }
             //generate a list of random number from 0 to 256 with length of L
             Set<Integer> randomNumber = Helper.randomNumberList(0, fileLength, numOfChar);
             int data, index = 0;
@@ -39,7 +43,7 @@ public class ColorConvertor {
                 }
                 //when read at the end of the file
                 if(data == -1){
-                    throw new Exception("file length is not match with characters length");
+                    throw new Exception("file length is less than characters length -> Length of file: " + fileLength);
                 }
                 //get half of the number of character from at the beginning and half at the end
                 //if(i < numOfChar/2 || i >= (fileLength-numOfChar/2)) this.charList[index++] = (char) data;
@@ -57,14 +61,10 @@ public class ColorConvertor {
         }
     }
 
-    public ColorConvertor(int numOfChar) throws FileNotFoundException, IOException, Exception{
-        this(numOfChar, "characters/ASCII.txt");
-    }
-
     /**
-     * validate if the number of character is valid in 2, 4, 8, 16, .... until 256 as maximun
-     * @param  number  An integer number that represent as the number of unique characters
-     * @return the boolean result of validation
+     * validate if the number of character is valid in 2, 4, 8, 16, .... until 256 as maximum
+     * @param  number   An integer number that represent as the number of unique characters
+     * @return          the boolean result of validation
      */
     private boolean isValid(int number){
         if(number > 256 || number%2 != 0) return false;
@@ -77,8 +77,8 @@ public class ColorConvertor {
      * The value of gray scale is from 0 to 256:
      * 1. 0 is darker since rbg of 0, 0, 0 is black
      * 2. 256 is lighter since rbg of 256, 256, 256 is white
-     * @param  g 8 bit value of grayscale
-     * @return the character corresponding with the grayscale value
+     * @param  g    8 bit value of grayscale
+     * @return      the character corresponding with the grayscale value
      */
     public char colorToChar(int g){
         int bit = this.length-1;
