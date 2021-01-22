@@ -1,5 +1,7 @@
 package helper;
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -54,8 +56,8 @@ public class Helper {
     /**
      * check if the given url is worked or not
      * 
-     * @param url An String represent the url
-     * @return the boolean result of validation
+     * @param url   An String represent the url
+     * @return      the boolean result of validation
      */
     public static boolean isURL(String url) {
         try {
@@ -69,8 +71,8 @@ public class Helper {
     /**
      * check if the given filePath is a directory or not
      * 
-     * @param filePath An String represent the directory path
-     * @return the boolean result of validation
+     * @param filePath  An String represent the directory path
+     * @return          the boolean result of validation
      */
     public static boolean isDirectory(String filePath) {
         File file = new File(filePath);
@@ -80,8 +82,8 @@ public class Helper {
     /**
      * check if the given filePath is a existed file or not
      * 
-     * @param filePath An String represent the file path
-     * @return the boolean result of validation
+     * @param filePath  An String represent the file path
+     * @return          the boolean result of validation
      */
     public static boolean isFileExist(String filePath) {
         File file = new File(filePath);
@@ -91,8 +93,8 @@ public class Helper {
     /**
      * check if the given filePath is a file or not
      * 
-     * @param filePath An String represent the file path
-     * @return the boolean result of validation
+     * @param filePath  An String represent the file path
+     * @return          the boolean result of validation
      */
     public static boolean isFile(String filePath) {
         File file = new File(filePath);
@@ -102,8 +104,8 @@ public class Helper {
     /**
      * create a new directory in the given path
      * 
-     * @param path An String represent the path
-     * @return the boolean result if true when directory is created, otherwise false
+     * @param path  An String represent the path
+     * @return      the boolean result if true when directory is created, otherwise false
      */
     public static boolean createDirectory(String path) {
         // Creating a File object
@@ -117,7 +119,7 @@ public class Helper {
      * number in string)
      * 
      * @param s An given string
-     * @return the number extract from the string
+     * @return  the number extract from the string
      */
     public static int getNumber(String s) {
         return Integer.parseInt(s.replaceAll("[\\D]", ""));
@@ -125,9 +127,9 @@ public class Helper {
 
     /**
      * return a set of random number from the range of start to end (exclusive) with
-     * the length of L ex. start = 0, end = 10, L = 3 [3,6,5,4,1,2,9,8,7] -> [3,5,6]
-     * this is the fianl result
-     * 
+     * the length of L 
+     * ex. start = 0, end = 10, L = 3 [1,2,3,4,5,6,7,8,9] -> [3,6,5,4,1,2,9,8,7] -> [3,5,6], 
+     * start = 3, end = 9, L = 4 [3,4,5,6,7,8] -> [7,8,4,5,3,6] -> [7,8,4,5]
      * @param start An integer value represent the starting number
      * @param end   An integer value represent the ending number
      * @param L     the size of the set
@@ -137,7 +139,7 @@ public class Helper {
         List<Integer> random = new ArrayList<Integer>();
         for (int i = start; i < end; i++) {
             random.add(i);
-        }
+        } 
         if (end - start == L)
             return new HashSet<>(random);
         Collections.shuffle(random);
@@ -148,6 +150,11 @@ public class Helper {
         return res;
     }
 
+    /**
+     * return the number of characters in the file
+     * @param filePath file path to read
+     * @return the number of characters
+     */
     public static int getFileLength(String filePath) throws IOException {
         int fileLen = 0, data = 0;
         try(FileReader fileReader = new FileReader(filePath)){
@@ -158,5 +165,38 @@ public class Helper {
             fileLen--;
         }
         return fileLen;
+    }
+
+    /**
+     * return the average color of rgb of the image pixel in specific coordinate
+     * @param image given image file
+     * @param x pixel coordinate
+     * @param y pixel coordinate
+     * @return the average color of rgb
+     */
+    public static int getAverageColor(BufferedImage image, int x, int y){
+        Color c = new Color(image.getRGB(x,y));
+        return (c.getRed()+c.getGreen()+c.getBlue())/3;
+    }
+
+    /**
+     * return the color
+     * @param color color in string representation
+     * @return the color 
+     */
+    public static Color getColor(String color){
+        switch(color.toLowerCase()){
+            case "red":
+                return Color.RED;
+            case "blue":
+                return Color.BLUE;
+            case "green":
+                return Color.GREEN;
+            case "orange":
+                return Color.ORANGE;
+            case "yellow":
+                return Color.YELLOW;
+        }
+        return Color.BLACK;
     }
 }
