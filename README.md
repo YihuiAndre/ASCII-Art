@@ -2,7 +2,7 @@
 
 This is a personal project that takes an **image file**, an **url image** or a **directory of images** as input and output an image or txt file of ASCII Art. Basically, it first convert RGB value of each pixels of an image into gray scale value. Then, since every gray scale value has a corresponding unique character, when translate the image into ASCII Art, it will map the value with its corresponding character. Currently, this project is supported to convert the image, the url of the image or the directory into ASCII Art with specific text color. It only could output ASCII Art as png format, text format or even to the terminal. In the future, My goal is to covert a list of ASCII Art into gif format. 
 
-This project uses **AWT library** to scan the image and draw the text art of image into output image and **IO file handling library** to store and retrieve the file. There is a helper class that is defined inside the helper folder.
+This project uses **AWT library** to scan the image and draw the text art of image into output image and **IO file handling library** to store and retrieve the file. There are several folders: **ASCII**, **helper**, **readmeFile**, **Sample** and **Sample_Output**. **ASCII** folder save all the characters files that use to represent the image. **helper** folder save the helper class which contains the helper function. **readmeFile** folder save the image and gif of readme. **Sample** and **Sample_Output** are the sample input files and sample output file.
 
 
 ## Usage
@@ -32,10 +32,10 @@ Output:
 
 ```
 Operations: -i    Path of input directory/image/image url. (First operation)
-            -o    Path of output directory/image. (Second operation)
+            -o    Path of output directory/image/txt which can be NULL if no output file. (Second operation)
             -t    Path of characters file. default value: ASCII/Template1.txt (third operation)
             -n    Number of unique characters between 0 and 256 (**note that the input has to be in 2^n form). default value: 256 (fourth operation)
-            -c    color of the ASCII Art. default value: black (fifth operation)
+            -c    Color of the ASCII Art. (red, blue, green, orange, yellow, black) default value: black (fifth operation)
             -h    Help menus
             Example: bash execute.sh Sample/img/example_5.jpg Sample_Output/Output.png ASCII/Template1.txt 256 black
 ```

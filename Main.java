@@ -74,10 +74,10 @@ public class Main {
         int numOfChar = 256;
         Color color = Color.BLACK;
         String help = "Operations: -i    Path of input directory/image/image url. (First operation)\n"
-                    + "            -o    Path of output directory/image. (Second operation)\n"
+                    + "            -o    Path of output directory/image/txt which can be NULL if no output file. (Second operation)\n"
                     + "            -t    Path of characters file. default value: ASCII/Template1.txt (third operation)\n"
                     + "            -n    Number of unique characters between 0 and 256 (**note that the input has to be in 2^n form). default value: 256 (fourth operation)\n"
-                    + "            -c    color of the ASCII Art. default value: black (fifth operation)\n"
+                    + "            -c    Color of the ASCII Art. (red, blue, green, orange, yellow, black) default value: black (fifth operation)\n"
                     + "            -h    Help menus\n"
                     + "            Example: bash execute.sh Sample/img/example_5.jpg Sample_Output/Output.png ASCII/Template1.txt 256 black\n";
         
