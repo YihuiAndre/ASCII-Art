@@ -2,7 +2,7 @@
 
 input=${1:- NULL}
 output=${2:- NULL}
-text=${3:-characters/ASCII.txt}
+text=${3:-ASCII/Template1.txt}
 num=${4:-256}
 color=${5:-black}
 

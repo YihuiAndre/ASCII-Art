@@ -70,16 +70,16 @@ public class Main {
     }
 
     public static void main(String[] args) throws FileNotFoundException, NullPointerException, IOException, Exception {
-        String inputPath = "img/example_5.jpg", outputPath  = "output/output.png", textFile = "characters/ASCII.txt";
+        String inputPath = "", outputPath  = "", textFile = "ASCII/Template1.txt";
         int numOfChar = 256;
         Color color = Color.BLACK;
-        String help = "Operation: -i    Path of input directory/image/image url.\n"
-                    + "           -o    Path of output directory/image.\n"
-                    + "           -t    Path of characters file. default value: characters/ASCII.txt\n"
-                    + "           -n    Number of unique characters between 0 and 256 (**note that the input has to be in 2^n form). default value: 256\n"
-                    + "           -c    color of the ASCII Art. default value: black\n"
-                    + "           -h    Help menus\n"
-                    + "           Example: java Main -i gif/anime -o output/anime\n";
+        String help = "Operations: -i    Path of input directory/image/image url. (First operation)\n"
+                    + "            -o    Path of output directory/image. (Second operation)\n"
+                    + "            -t    Path of characters file. default value: ASCII/Template1.txt (third operation)\n"
+                    + "            -n    Number of unique characters between 0 and 256 (**note that the input has to be in 2^n form). default value: 256 (fourth operation)\n"
+                    + "            -c    color of the ASCII Art. default value: black (fifth operation)\n"
+                    + "            -h    Help menus\n"
+                    + "            Example: bash execute.sh Sample/img/example_5.jpg Sample_Output/Output.png ASCII/Template1.txt 256 black\n";
         
         for(int i = 0, len = args.length; i < len; i++){
             switch(args[i].charAt(1)){
@@ -87,7 +87,7 @@ public class Main {
                     inputPath = args[i+1];
                     break;
                 case 'o':
-                    outputPath = args[i+1];
+                    outputPath = args[i+1].equals("NULL") ? "" : args[i+1];
                     break;
                 case 't':
                     textFile = args[i+1];
@@ -121,6 +121,6 @@ public class Main {
             isSuccessful = readImgDirectoryToOutputDirectory(translator, inputPath, outputPath, color);
         }
         message = (isSuccessful ? "success import image to ": "Some errors occur when import image to ");
-        System.out.println(message + outputPath);
+        System.out.println(message + (outputPath.equals("") ? "terminal" : outputPath));
     }
 }
