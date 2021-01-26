@@ -115,14 +115,21 @@ public class Helper {
     }
 
     /**
-     * obtain number from the string (May want to add -1 as return if there is not
-     * number in string)
+     * obtain number from the string, return -1 if string is empty
      * 
      * @param s An given string
      * @return  the number extract from the string
      */
     public static int getNumber(String s) {
-        return Integer.parseInt(s.replaceAll("[\\D]", ""));
+        String number = s.replaceAll("[\\D]", "");
+        if(number.length() == 0) return -1;
+        return Integer.parseInt(number);
+    }
+
+    public static String getFileName(String fileName){
+        int i = fileName.length()-1;
+        while(fileName.charAt(i) != '.') i--;
+        return fileName.substring(0, i);
     }
 
     /**

@@ -57,7 +57,8 @@ public class Main {
                         return false;
                     }
                 }
-                listOfImage[index].toImgFile(outputDirectory + "/" + num + ".png", c);
+                if(num != -1) listOfImage[index].toImgFile(outputDirectory + "/" + num + ".png", c);
+                else listOfImage[index].toImgFile(outputDirectory + "/" + Helper.getFileName(child.getName()) + ".png", c);
                 index++;
                 Helper.printTaskBar(index, directoryListing.length, "Finished processing all the images to \"" + outputDirectory + "\"");
             }
