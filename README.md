@@ -28,13 +28,13 @@ Directory Tree
 |–– lib
 ```
 
-- ASCII: store all the characters files that use to represent the image
-- helper: store several helper functions
-- lib: store external JAR
-- Main: Main classes that do the image processing
-- readmeFile: store the image and gif of readme
-- Sample: Some sample input files
-- Sample_Output: Some sample output files
+- **ASCII**: store all the characters files that use to represent the image
+- **helper**: store several helper functions
+- **lib**: store external JAR
+- **Main**: Main classes that do the image processing
+- **readmeFile**: store the image and gif of readme
+- **Sample**: Some sample input files
+- **Sample_Output**: Some sample output files
 
 ---
 
