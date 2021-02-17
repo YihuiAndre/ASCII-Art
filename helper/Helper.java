@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+
 public class Helper {
     /**
      * print the two Dimension arraylist
@@ -37,16 +38,16 @@ public class Helper {
      * @param description A successful message after the work is finished
      */
     public static void printTaskBar(double finished, double total, String description) {
+        System.out.print("\r");
         int percentage = (int) ((finished / total) * 100);
         StringBuilder bar = new StringBuilder();
-        bar.append("|");
         for (int i = 0; i < 50; i++) {
             if (i < percentage / 2)
-                bar.append("=");
+                bar.append("\u2588");
             else
                 bar.append(" ");
         }
-        bar.append("|" + String.format("%02d", percentage) + "%\r");
+        bar.append("  " + String.format("%02d", percentage) + "%\r");
         System.out.print(bar);
         if (percentage == 100) {
             System.out.println("\n" + description);
@@ -80,7 +81,7 @@ public class Helper {
     }
 
     /**
-     * check if the given filePath is a existed file or not
+     * check if the given filePath is existed or not
      * 
      * @param filePath  An String represent the file path
      * @return          the boolean result of validation
@@ -115,21 +116,25 @@ public class Helper {
     }
 
     /**
-     * obtain number from the string, return -1 if string is empty
+     * obtain first appeared number from left to right in the string and return it.
+     * If not digit in the string return -1
      * 
      * @param s An given string
      * @return  the number extract from the string
      */
     public static int getNumber(String s) {
-        String number = s.replaceAll("[\\D]", "");
-        if(number.length() == 0) return -1;
-        return Integer.parseInt(number);
-    }
-
-    public static String getFileName(String fileName){
-        int i = fileName.length()-1;
-        while(fileName.charAt(i) != '.') i--;
-        return fileName.substring(0, i);
+        int n = s.length();
+        int i = 0;
+        while(i < n && !Character.isDigit(s.charAt(i))){
+            i++;
+        }
+        //if there is not digi, return -1
+        if(i == s.length()) return -1;
+        int j = i;
+        while(j < n && Character.isDigit(s.charAt(j))){
+            j++;
+        }
+        return Integer.parseInt(s.substring(i, j));
     }
 
     /**
