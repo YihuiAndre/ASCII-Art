@@ -31,7 +31,7 @@ public class Main {
             }
         }
 
-        TextImage img = new TextImage(translator, inputPath);
+        ASCII_Image img = new ASCII_Image(translator, inputPath);
         if(fileExtension.equals("png")) img.toImgFile(outputPath, c);
         else if(fileExtension.equals("txt")) img.toTextFile(outputPath);
         else img.toTerminal();
@@ -65,12 +65,10 @@ public class Main {
         //sort the file in directory base on their number if there is a number in the file name
         Arrays.sort(directoryListing, (e1, e2) -> Helper.getNumber(e1.getName())-Helper.getNumber(e2.getName()));
         int index = 0;
-        TextImage[] listOfImages = new TextImage[directoryListing.length];
+        ASCII_Image[] listOfImages = new ASCII_Image[directoryListing.length];
         for (File child : directoryListing) {
-            listOfImages[index] = new TextImage(translator, child.getPath());
-            //remove all the contents in the file name except the number
-            int num = Helper.getNumber(child.getName());
-            listOfImages[index].toImgFile(outputDirectory + "/" + num + ".png", c);
+            listOfImages[index] = new ASCII_Image(translator, child.getPath());
+            listOfImages[index].toImgFile(outputDirectory + "/" + index + ".png", c);
             index++;
             Helper.printTaskBar(index, directoryListing.length, "Finished processing all the images to \"" + outputDirectory + "\"");
         }
@@ -88,17 +86,16 @@ public class Main {
         //sort the file in directory base on their number if there is a number in the file name
         Arrays.sort(directoryListing, (e1, e2) -> Helper.getNumber(e1.getName())-Helper.getNumber(e2.getName()));
         int index = 0;
-        TextImage[] listOfImages = new TextImage[directoryListing.length];
+        ASCII_Image[] listOfImages = new ASCII_Image[directoryListing.length];
         for (File child : directoryListing) {
-            listOfImages[index] = new TextImage(translator, child.getPath());
-            index++;
-            Helper.printTaskBar(index, directoryListing.length, "Finished processing all the images and begin to convert to GIF");
+            listOfImages[index] = new ASCII_Image(translator, child.getPath());
+            Helper.printTaskBar(++index, directoryListing.length, "Finished processing all the images and begin to convert to GIF");
         }
 
         BufferedImage tmp = listOfImages[0].getBufferedImage(c);
-        Gif gif = new Gif(tmp.getWidth(), tmp.getHeight(), "test.gif", (long) 0.1);
+        Gif gif = new Gif(tmp.getWidth(), tmp.getHeight(), outputFile, (long) 0.1);
         int processed = 0;
-        for(TextImage image : listOfImages){
+        for(ASCII_Image image : listOfImages){
             gif.addImage(image.getBufferedImage(c));
             Helper.printTaskBar(++processed, directoryListing.length, "Finished processing all the images to \"" + outputFile + "\"");
         }
