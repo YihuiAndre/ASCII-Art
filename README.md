@@ -16,7 +16,6 @@ Directory Tree
 |–– Main
 |–– Sample
 |  |–– Animation
-|  |–– Gif
 |  |–– anime#1
 |  |–– anime#2
 |  |–– bear
@@ -25,12 +24,7 @@ Directory Tree
 |  |–– anime#1
 |  |–– anime#2
 |  |–– bear
-|–– build
-|  |–– Main
-|  |–– helper
 |–– helper
-|–– img
-|  |–– images
 |–– lib
 |–– readmeFile
 ```
