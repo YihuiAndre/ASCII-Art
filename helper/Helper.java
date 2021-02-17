@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+
 public class Helper {
     /**
      * print the two Dimension arraylist
@@ -115,14 +116,25 @@ public class Helper {
     }
 
     /**
-     * obtain number from the string (May want to add -1 as return if there is not
-     * number in string)
+     * obtain first appeared number from left to right in the string and return it.
+     * If not digit in the string return -1
      * 
      * @param s An given string
      * @return  the number extract from the string
      */
     public static int getNumber(String s) {
-        return Integer.parseInt(s.replaceAll("[\\D]", ""));
+        int n = s.length();
+        int i = 0;
+        while(i < n && !Character.isDigit(s.charAt(i))){
+            i++;
+        }
+        //if there is not digi, return -1
+        if(i == s.length()) return -1;
+        int j = i;
+        while(j < n && Character.isDigit(s.charAt(j))){
+            j++;
+        }
+        return Integer.parseInt(s.substring(i, j));
     }
 
     /**
