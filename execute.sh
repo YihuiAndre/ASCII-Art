@@ -113,6 +113,6 @@ then
     java -cp ./build:./lib/gifencoder-0.10.1.jar Main -h
     
 else
-    java -cp ./build:./lib/gifencoder-0.10.1.jar Main -i $input -o $output -t $text -n $num -c $color
+    java -cp ./build:./lib/gifencoder-0.10.1.jar Main/Main -i $input -o $output -t $text -n $num -c $color
 fi
 
