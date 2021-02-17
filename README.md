@@ -1,9 +1,53 @@
 # ASCII ART
 
-This is a personal project that takes an **image file**, an **url image** or a **directory of images** as input and output an image or txt file of ASCII Art. Basically, it first convert RGB value of each pixels of an image into gray scale value. Then, since every gray scale value has a corresponding unique character, when translate the image into ASCII Art, it will map the value with its corresponding character. Currently, this project is supported to convert the image, the url of the image or the directory into ASCII Art with specific text color. It only could output ASCII Art as png format, text format or even to the terminal. In the future, My goal is to covert a list of ASCII Art into gif format. 
+Description: Transform an **image file**, an **url image** or a **directory of images** into ASCII Art as **PNG image** or **txt file** or **GIF** of ASCII Art. 
 
-This project uses **AWT library** to scan the image and draw the text art of image into output image and **IO file handling library** to store and retrieve the file. There are several folders: **ASCII**, **helper**, **readmeFile**, **Sample** and **Sample_Output**. **ASCII** folder save all the characters files that use to represent the image. **helper** folder save the helper class which contains the helper function. **readmeFile** folder save the image and gif of readme. **Sample** and **Sample_Output** are the sample input files and sample output file.
+Currently Support Input File format: JPEG, JPG, PNG, BMP, URL
 
+Currently Support Output File format: TXT, PNG, GIF
+
+External Library Usage: [gifencoder](https://github.com/square/gifencoder), AWT library, ImageIO library
+
+```
+Directory Tree
+
+|  
+|–– ASCII
+|–– Main
+|–– Sample
+|  |–– Animation
+|  |–– Gif
+|  |–– anime#1
+|  |–– anime#2
+|  |–– bear
+|  |–– img
+|–– Sample_Output
+|  |–– anime#1
+|  |–– anime#2
+|  |–– bear
+|–– build
+|  |–– Main
+|  |–– helper
+|–– helper
+|–– img
+|  |–– images
+|–– lib
+|–– readmeFile
+```
+
+- ASCII: store all the characters files that use to represent the image
+- helper: store several helper functions
+- lib: store external JAR
+- Main: Main classes that do the image processing
+- readmeFile: store the image and gif of readme
+- Sample: Some sample input files
+- Sample_Output: Some sample output files
+
+---
+
+Basically, it first convert RGB value of each pixels of an image into gray scale value. Then, since every gray scale value has a corresponding unique character, when translate the image into ASCII Art, it will map the value with its corresponding character. Currently, this project is supported to convert the image, the url of the image or the directory into ASCII Art with specific text color. It only could output ASCII Art as png format, text format or even to the terminal. In the future, My goal is scanning a gif file and convert it into ASCII Art in gif file format. Also, there are some improvement need to be done in the future such as optimize the image file size, speed up the process to create gif and able to scan multiple large scale of images. 
+
+**note**: If you want to convert the images into gif, you need to first split the gif into frames of images and then process those into ASCII Art.
 
 ## Usage
 There is **one** ways to execute the programs with various operations:
@@ -32,7 +76,7 @@ Output:
 
 ```
 Operations: -i    Path of input directory/image/image url. (First operation)
-            -o    Path of output directory/image/txt which can be NULL if no output file. (Second operation)
+            -o    Path of output output directory/image/GIF/txt which can be NULL if no output file. (Second operation)
             -t    Path of characters file. default value: ASCII/Template1.txt (third operation)
             -n    Number of unique characters between 0 and 256 (**note that the input has to be in 2^n form). default value: 256 (fourth operation)
             -c    Color of the ASCII Art. (red, blue, green, orange, yellow, black) default value: black (fifth operation)
@@ -114,4 +158,13 @@ bash execute.sh Sample/img/example_5.jpg NULL ASCII/Template1.txt 256
 
 ```bash
 bash execute.sh https://cdn.jpegmini.com/user/images/slider_puffin_before_mobile.jpg Sample_Output/Output.png ASCII/Template1.txt 256 black
+```
+
+------------------
+| before | after |
+| :---:  | :---: |
+| <img src="https://i.pinimg.com/originals/2d/7a/d9/2d7ad949b607a598c8f6fd65c1d91f75.gif" width="512" height="512" /> | <img src="./readmeFile/demonstration10.gif" width="512" height="512" /> |
+
+```bash
+bash execute.sh Sample/Animation/ ./Sample_Output/Output.gif ASCII/Template1.txt 256 black
 ```
