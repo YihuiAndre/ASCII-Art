@@ -26,7 +26,6 @@ Directory Tree
 |  |–– bear
 |–– helper
 |–– lib
-|–– readmeFile
 ```
 
 - ASCII: store all the characters files that use to represent the image
