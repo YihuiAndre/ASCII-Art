@@ -2,7 +2,7 @@
 
 Description: Transform an **image file**, an **url image** or a **directory of images** into ASCII Art as **PNG image** or **txt file** or **GIF** of ASCII Art. 
 
-Currently Support Input File format: JPEG, JPG, PNG, BMP, URL
+Currently Support Input File format: JPEG, JPG, PNG, URL
 
 Currently Support Output File format: TXT, PNG, GIF
 
