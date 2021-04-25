@@ -3,16 +3,31 @@ package Main;
 import java.util.ArrayList;
 import java.util.List;
 
+import helper.Helper;
+
+import java.awt.image.BufferedImage;
+
 //an container class that store the image grayscale value in each pixel
-public class GrayscaleImage {
+public class GrayscaleImage implements Image{
     //store the 8 bit color value of grayscale
     private final List<List<Integer>> grayscale;
-    
-    public GrayscaleImage(){
+    private final int height;
+    private final int width;
+
+    public GrayscaleImage(BufferedImage image){
         this.grayscale = new ArrayList<>();
+        width = image.getWidth();
+        height = image.getHeight();
+        for(int y = 0; y < height; y++){
+            for(int x = 0; x < width; x++){
+                //append gray scale value into array list
+                addGrayscale(y, Helper.getAverageColor(image, x, y));
+            }
+        }
     }
 
-    public List<List<Integer>> getGrayscale(){
+    @Override
+    public List<List<Integer>> getColor(){
         return grayscale;
     }
 
@@ -22,7 +37,8 @@ public class GrayscaleImage {
      * @param  y    stand for row
      * @return      the gray scale value
      */
-    public int getGrayscale(int x, int y){
+    @Override
+    public int getColor(int x, int y){
         return this.grayscale.get(y).get(x);
     }
 
@@ -31,16 +47,18 @@ public class GrayscaleImage {
      * @param  y    stand for row
      * @return      the list of the gray scale
      */
-    public List<Integer> getGrayscale(int y){
+    @Override
+    public List<Integer> getColor(int y){
         return this.grayscale.get(y);
     }
 
-    public int getRowSize(){
-        return this.grayscale.size();
+    @Override
+    public int getHeight(){
+        return height;
     }
-
-    public int getColSize(int row){
-        return this.grayscale.get(row).size();
+    @Override
+    public int getWidth(){
+        return width;
     }
 
     /**

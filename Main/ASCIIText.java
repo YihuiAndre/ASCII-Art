@@ -9,7 +9,7 @@ import helper.Helper;
 
 
 //A class use to communicate between the grayscale value and character
-public class ColorConvertor {
+public class ASCIIText {
     private final char[] charList;
     private final int length;
 
@@ -22,7 +22,7 @@ public class ColorConvertor {
      * @throws IOException
      * @throws Exception
      */
-    public ColorConvertor(int numOfChar, String filePath) throws FileNotFoundException, IOException, Exception{
+    public ASCIIText(int numOfChar, String filePath) throws FileNotFoundException, IOException, Exception{
         this.length = numOfChar;
         this.charList = new char[this.length];
         try(FileReader fileReader = new FileReader(filePath)){

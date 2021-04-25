@@ -16,20 +16,19 @@ import javax.imageio.ImageIO;
 import helper.Helper;
 import java.util.List;
 
-public class ASCII_Image {
+public class ASCIIProcessor {
     //store the grayscale value of the image
-    private final GrayscaleImage imgColor;
-    private ColorConvertor translator;
+    private final Image grayScaleImg;
+    private ASCIIText translator;
 
     /**
      * After the initialize the object, store all the color value into 2-dimensional array list
      * @param translator    the translator which translate the color into character
      * @param imgPath       the path of image which can be the path for image or URL link
      */
-    public ASCII_Image(ColorConvertor translator, String imgPath)
+    public ASCIIProcessor(ASCIIText translator, String imgPath)
             throws FileNotFoundException, IOException, NullPointerException, Exception{
         this.translator = translator;
-        this.imgColor = new GrayscaleImage();
         BufferedImage image = null; 
         try{
             if(Helper.isURL(imgPath)){
@@ -49,13 +48,7 @@ public class ASCII_Image {
         catch(NullPointerException err){
             throw err;
         }
-        int w = image.getWidth(), h = image.getHeight();
-        for(int y = 0; y < h; y++){
-            for(int x = 0; x < w; x++){
-                //append gray scale value into array list
-                this.imgColor.addGrayscale(y, Helper.getAverageColor(image, x, y));
-            }
-        }
+        this.grayScaleImg = new GrayscaleImage(image);
     }
 
     /**
@@ -64,7 +57,7 @@ public class ASCII_Image {
      */
     public void toTextFile(String filePath){
         try(FileWriter writer = new FileWriter(filePath)){
-            for(List<Integer> array : this.imgColor.getGrayscale()){
+            for(List<Integer> array : this.grayScaleImg.getColor()){
                 for(Integer val : array){
                     //write down the character representation of the gray scale value into text file
                     writer.write(translator.colorToChar(val));
@@ -82,9 +75,10 @@ public class ASCII_Image {
 
     /**
      * Output an image file into terminal
+     * @throws InterruptedException
      */
-    public void toTerminal(){
-        for(List<Integer> array : this.imgColor.getGrayscale()){
+    public void toTerminal() throws InterruptedException{
+        for(List<Integer> array : this.grayScaleImg.getColor()){
             for(Integer val : array){
                 System.out.print(translator.colorToChar(val));
             }
@@ -124,8 +118,8 @@ public class ASCII_Image {
      */
     private void drawImg(Graphics g, int ascent, int descent){
         //render all the characters into image files
-        for(int row = 0, rLen = this.imgColor.getRowSize(); row < rLen; row++){
-            g.drawString(getStringRepresentation(this.imgColor.getGrayscale(row)), 0, ascent + (ascent+descent)*row);
+        for(int row = 0, rLen = this.grayScaleImg.getHeight(); row < rLen; row++){
+            g.drawString(getStringRepresentation(this.grayScaleImg.getColor(row)), 0, ascent + (ascent+descent)*row);
         }
         g.dispose();
     }
@@ -139,7 +133,7 @@ public class ASCII_Image {
         FontMetrics fm = getFontMetrics(new Font(Font.MONOSPACED, Font.PLAIN, fontSize));
         int ascent = fm.getAscent(), descent = fm.getDescent();
         //set up width and height of the image
-        int width = ((fontSize/5)*3)*this.imgColor.getColSize(0)+1, height = (ascent+descent)*this.imgColor.getRowSize()+1;
+        int width = ((fontSize/5)*3)*this.grayScaleImg.getWidth()+1, height = (ascent+descent)*this.grayScaleImg.getHeight()+1;
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics graph = image.getGraphics();
         //set font as MONOSPACED because all characters have the same width

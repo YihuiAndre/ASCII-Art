@@ -13,7 +13,7 @@ import helper.Helper;
 public class Main {
 
     //read a input image file and output to output path
-    public static boolean readImgToOutputImg(ColorConvertor translator, String inputPath, String outputPath, Color c)
+    public static boolean readImgToOutputImg(ASCIIText translator, String inputPath, String outputPath, Color c)
             throws FileNotFoundException, NullPointerException, IOException, Exception {
         
         String fileExtension = "";
@@ -31,7 +31,7 @@ public class Main {
             }
         }
 
-        ASCII_Image img = new ASCII_Image(translator, inputPath);
+        ASCIIProcessor img = new ASCIIProcessor(translator, inputPath);
         if(fileExtension.equals("png")) img.toImgFile(outputPath, c);
         else if(fileExtension.equals("txt")) img.toTextFile(outputPath);
         else img.toTerminal();
@@ -40,7 +40,7 @@ public class Main {
     }
 
     //read a input directory and output to output directory
-    public static boolean readImgDirectoryToOutputDirectory(ColorConvertor translator, String inputDirectory, String outputDirectory, Color c)
+    public static boolean readImgDirectoryToOutputDirectory(ASCIIText translator, String inputDirectory, String outputDirectory, Color c)
             throws FileNotFoundException, NullPointerException, IOException, Exception {
         //if output path is a file, then print the error
         if(Helper.isFile(outputDirectory)){
@@ -65,9 +65,9 @@ public class Main {
         //sort the file in directory base on their number if there is a number in the file name
         Arrays.sort(directoryListing, (e1, e2) -> Helper.getNumber(e1.getName())-Helper.getNumber(e2.getName()));
         int index = 0;
-        ASCII_Image[] listOfImages = new ASCII_Image[directoryListing.length];
+        ASCIIProcessor[] listOfImages = new ASCIIProcessor[directoryListing.length];
         for (File child : directoryListing) {
-            listOfImages[index] = new ASCII_Image(translator, child.getPath());
+            listOfImages[index] = new ASCIIProcessor(translator, child.getPath());
             listOfImages[index].toImgFile(outputDirectory + "/" + index + ".png", c);
             index++;
             Helper.printTaskBar(index, directoryListing.length, "Finished processing all the images to \"" + outputDirectory + "\"");
@@ -76,7 +76,7 @@ public class Main {
     }
 
     //read a directory of image and put it into gif
-    public static boolean readImgDirectoryToGif(ColorConvertor translator, String inputDirectory, String outputFile, Color c)
+    public static boolean readImgDirectoryToGif(ASCIIText translator, String inputDirectory, String outputFile, Color c)
             throws NullPointerException, Exception {
         File[] directoryListing = new File(inputDirectory).listFiles();
         if (directoryListing == null) {
@@ -86,16 +86,16 @@ public class Main {
         //sort the file in directory base on their number if there is a number in the file name
         Arrays.sort(directoryListing, (e1, e2) -> Helper.getNumber(e1.getName())-Helper.getNumber(e2.getName()));
         int index = 0;
-        ASCII_Image[] listOfImages = new ASCII_Image[directoryListing.length];
+        ASCIIProcessor[] listOfImages = new ASCIIProcessor[directoryListing.length];
         for (File child : directoryListing) {
-            listOfImages[index] = new ASCII_Image(translator, child.getPath());
+            listOfImages[index] = new ASCIIProcessor(translator, child.getPath());
             Helper.printTaskBar(++index, directoryListing.length, "Finished processing all the images and begin to convert to GIF");
         }
 
         BufferedImage tmp = listOfImages[0].getBufferedImage(c);
         Gif gif = new Gif(tmp.getWidth(), tmp.getHeight(), outputFile, (long) 0.1);
         int processed = 0;
-        for(ASCII_Image image : listOfImages){
+        for(ASCIIProcessor image : listOfImages){
             gif.addImage(image.getBufferedImage(c));
             Helper.printTaskBar(++processed, directoryListing.length, "Finished processing all the images to \"" + outputFile + "\"");
         }
@@ -147,7 +147,7 @@ public class Main {
             return;
         }
         System.out.println(inputPath + " --------------> " + outputPath);
-        ColorConvertor translator = new ColorConvertor(numOfChar, textFile);
+        ASCIIText translator = new ASCIIText(numOfChar, textFile);
         if(!Helper.isDirectory(inputPath)){
             isSuccessful = readImgToOutputImg(translator, inputPath, outputPath, color);
         }
